@@ -1,0 +1,153 @@
+<!-- Contact Section -->
+<section id="contact">
+    <h2>Contact Me</h2>
+    <div class="chat-container">
+      <div class="chat-header">
+        <h3>Contact Bot</h3>
+      </div>
+      <div class="chat-body" id="chatBody">
+        <!-- Chat messages will be inserted here -->
+      </div>
+      <div class="chat-input">
+        <button id="startChat" onclick="startChat()">Start Chat</button>
+        <input type="text" id="userInput" placeholder="Type your answer..." style="display: none;">
+        <textarea id="userMessage" placeholder="Add your message..." style="display: none;"></textarea>
+        <button id="sendMessage" onclick="processInput()" style="display: none;">Send</button>
+      </div>
+    </div>
+  </section>
+  
+  <style>
+  .chat-container {
+    max-width: 500px;
+    margin: 0 auto;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  
+  .chat-header {
+    background: #f5f5f5;
+    padding: 15px;
+    border-radius: 10px 10px 0 0;
+  }
+  
+  .chat-body {
+    height: 300px;
+    overflow-y: auto;
+    padding: 15px;
+    background: white;
+  }
+  
+  .chat-input {
+    padding: 15px;
+    background: #f5f5f5;
+    border-radius: 0 0 10px 10px;
+  }
+  
+  .bot-message, .user-message {
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .bot-message {
+    background: #e3f2fd;
+  }
+  
+  .user-message {
+    background: #f5f5f5;
+    margin-left: 20%;
+  }
+  
+  input, textarea, button {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  button {
+    background: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background: #0056b3;
+  }
+  </style>
+  
+  <script>
+  let currentStep = 0;
+  let answers = {};
+  const questions = [
+    {
+      question: "What is the main purpose of your contact?",
+      options: ["Work Opportunity", "Project Inquiry", "General Question", "Feedback"],
+      key: "purpose"
+    },
+    {
+      question: "What type of project are you considering?",
+      options: ["Web Development", "Design", "Consulting", "Other"],
+      key: "projectType"
+    },
+    {
+      question: "What is your timeline for this project?",
+      options: ["Immediate", "1-3 Months", "3-6 Months", "Not Sure"],
+      key: "timeline"
+    }
+  ];
+  
+  function startChat() {
+    document.getElementById('startChat').style.display = 'none';
+    document.getElementById('userInput').style.display = 'block';
+    document.getElementById('sendMessage').style.display = 'block';
+    showNextQuestion();
+  }
+  
+  function showNextQuestion() {
+    if (currentStep < questions.length) {
+      const question = questions[currentStep];
+      const chatBody = document.getElementById('chatBody');
+      
+      // Show bot message
+      const botMessage = document.createElement('div');
+      botMessage.className = 'bot-message';
+      botMessage.innerHTML = `<p>${question.question}</p>`;
+      question.options.forEach(option => {
+        botMessage.innerHTML += `<button onclick="selectOption('${option}')">${option}</button>`;
+      });
+      chatBody.appendChild(botMessage);
+      chatBody.scrollTop = chatBody.scrollHeight;
+    } else {
+      showMessageField();
+    }
+  }
+  
+  function selectOption(option) {
+    const key = questions[currentStep].key;
+    answers[key] = option;
+    currentStep++;
+    showNextQuestion();
+  }
+  
+  function showMessageField() {
+    document.getElementById('userInput').style.display = 'none';
+    document.getElementById('userMessage').style.display = 'block';
+    document.getElementById('sendMessage').innerHTML = 'Send Message';
+  }
+  
+  function processInput() {
+    const userMessage = document.getElementById('userMessage').value;
+    answers.message = userMessage;
+  
+    // Generate mailto link
+    const subject = `Contact Request: ${answers.purpose} - ${answers.projectType}`;
+    const body = `Purpose: ${answers.purpose}\nProject Type: ${answers.projectType}\nTimeline: ${answers.timeline}\n\nMessage:\n${answers.message}`;
+    
+    window.location.href = `mailto:your-email@example.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  }
+  </script>
